@@ -1,6 +1,6 @@
 #include "King.h"
 #include <math.h>
-King::King(int x, int y, bool isWhite, std::string type) : Piece(x, y, type, isWhite) {}
+King::King(int x, int y, bool isWhite, char type) : Piece(x, y, type, isWhite) {}
 
 bool King::moveValid(int x, int y)
 {

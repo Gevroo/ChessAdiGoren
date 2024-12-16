@@ -2,5 +2,6 @@
 
 bool Bishop::moveValid(int x, int y)
 {
-	return this->_x - x == this->_y;//Checking if its in the same diagonal line 
+	return abs(this->_x - x) == abs(this->_y - y);//Checking if its in the same diagonal line 
 }
+Bishop::Bishop(int x, int y, bool isWhite): Piece(x, y, 'b', isWhite) {}

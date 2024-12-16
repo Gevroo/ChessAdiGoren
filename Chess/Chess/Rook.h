@@ -6,6 +6,6 @@ class Rook : public Piece
 {
 public:
 	bool moveValid(int x, int y) ;
-	//Rook(int x, int y, bool isWhite);
+	Rook(int x, int y, bool isWhite);
 
 };

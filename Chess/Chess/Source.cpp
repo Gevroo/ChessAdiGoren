@@ -7,7 +7,7 @@ in order to read and write information from and to the Backend
 #include "Pipe.h"
 #include <iostream>
 #include <thread>
-
+#include "Board.h"
 using std::cout;
 using std::endl;
 using std::string;
@@ -45,9 +45,10 @@ void main()
 	char msgToGraphics[1024];
 	// msgToGraphics should contain the board string accord the protocol
 	// YOUR CODE
+	
 
 	strcpy_s(msgToGraphics, "rnbkqbnrpppppppp################################PPPPPPPPRNBKQBNR1"); // just example...
-	
+	Board* chessBoard = new Board(msgToGraphics);
 	p.sendMessageToGraphics(msgToGraphics);   // send the board string
 
 	// get message from graphics
@@ -55,6 +56,8 @@ void main()
 
 	while (msgFromGraphics != "quit")
 	{
+		cout << chessBoard->craftBoard() << std::endl;
+
 		// should handle the string the sent from graphics
 		// according the protocol. Ex: e2e4           (move e2 to e4)
 		
@@ -62,8 +65,8 @@ void main()
 		strcpy_s(msgToGraphics, "YOUR CODE"); // msgToGraphics should contain the result of the operation
 
 		/******* JUST FOR EREZ DEBUGGING ******/
-		int r = rand() % 10; // just for debugging......
-		msgToGraphics[0] = (char)(1 + '0');
+		int r = chessBoard->moveValid(msgFromGraphics); // just for debugging......
+		msgToGraphics[0] = (char)(r + '0');
 		msgToGraphics[1] = 0;
 		/******* JUST FOR EREZ DEBUGGING ******/
 

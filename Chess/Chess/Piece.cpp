@@ -9,7 +9,7 @@ int Piece::getY() const
 {
 	return this->_y;
 }
-std::string Piece::getType() const
+char Piece::getType() const
 {
 	return this->_type;
 }
@@ -22,7 +22,7 @@ void Piece::changeCoords(int newX, int newY)
 	this->_x = newX;
 	this->_y = newY;
 }
-Piece::Piece(int x, int y, std::string type, bool isWhite)
+Piece::Piece(int x, int y, char type, bool isWhite)
 {
 	this->_x = x;
 	this->_y = y;
