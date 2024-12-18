@@ -61,101 +61,118 @@ Board::Board(std::string buildBoardCommand)
 		}
 	}
 }
-bool Board::pieceExist(int x,int y,bool expectedColor,bool exist) const
+/*bool Board::pieceExist(int x, int y, bool expectedColor, bool exist) const
 {
 	return (exist && this->_pieces[x][y] != nullptr) && (!exist && this->_pieces[x][y] == nullptr) && this->_pieces[x][y]->whiteOrNot() == expectedColor;
-}
+}*/
 int Board::moveValid(std::string command)
 {
 	int result = 0;
-	int values[] = {  8-static_cast<int>(command[1]-'0'),static_cast<int>(command[0] - 'a'), 8 - static_cast<int>(command[3]-'0'),static_cast<int>(command[2] - 'a') };
+	int vals[] = {  8-static_cast<int>(command[1]-'0'),static_cast<int>(command[0] - 'a'), 8 - static_cast<int>(command[3]-'0'),static_cast<int>(command[2] - 'a') };
 
-	//if(_pieces[values[0]][values[1]] != nullptr)
-	//std::cout << _pieces[values[0]][values[1]]->whiteOrNot() << std::endl;
-	if (!inBounds(values[0], values[1]) || !inBounds(values[2], values[3]))
-		result = 5;
-	else if (_pieces[values[0]][values[1]] == nullptr || _pieces[values[0]][values[1]]->whiteOrNot() != _turn)
-		result = 2;
-	else if (values[0] == values[2] && values[1] == values[3])
-		result = 7;
-	//else if (pieceExist(values[0], values[1], _turn, false))
+
+	if (!inBounds(vals[0], vals[1]) || !inBounds(vals[2], vals[3]))
+		return 5;
+	else if (_pieces[vals[0]][vals[1]] == nullptr || _pieces[vals[0]][vals[1]]->whiteOrNot() != _turn)
+		return 2;
+	else if (vals[0] == vals[2] && vals[1] == vals[3])
+		return 7;
+	//else if (pieceExist(vals[0], vals[1], _turn, false))
 	//		result = 2;
-	else if(_pieces[values[2]][values[3]] != nullptr && _pieces[values[2]][values[3]]->whiteOrNot() == _turn)
-		result = 3;
-	else if ((_pieces[values[2]][values[3]] != nullptr && values[1] == values[3] && _pieces[values[0]][values[1]]->getType() == 'p') || (!trickPawn(values[0], values[1], values[2], values[3]) && (!_pieces[values[0]][values[1]]->moveValid(values[2], values[3]) || !pathIsClear(values[0], values[1], values[2], values[3]))))
-		result = 6;
+	else if(_pieces[vals[2]][vals[3]] != nullptr && _pieces[vals[2]][vals[3]]->whiteOrNot() == _turn)
+		return 3;
+	else if ((_pieces[vals[2]][vals[3]] != nullptr && vals[1] == vals[3] && _pieces[vals[0]][vals[1]]->getType() == 'p') || (!trickPawn(vals[0], vals[1], vals[2], vals[3]) && (!_pieces[vals[0]][vals[1]]->moveValid(vals[2], vals[3]) || !pathIsClear(vals[0], vals[1], vals[2], vals[3]))))
+		return 6;
 	//this if is making my code feel stupid
 	//Explanation: it will check if theres a piece infront of the pawn and if yes it will give an error, it will check if a pawn can eat,and lastly it will check manualy for all of the other pieces
 	_enPassent = nullptr;
-	if (result == 0 || result == 8)
+	if (result == 0)
 	{
-		if (_pieces[values[0]][values[1]]->getType() == 'p' && abs(values[0] - values[2]) == 2)
-		{
-			_enPassent = _pieces[values[0]][values[1]];
-			std::cout << "en passent avaialiabe";
-		}
-		this->movePiece(values[0],values[1],  values[2], values[3]);
-		Piece* rem = removePiece(values[0], values[1]);//i switched between them so now the unwanted one is the frst
+		if (_pieces[vals[0]][vals[1]]->getType() == 'p' && abs(vals[0] - vals[2]) == 2)
+			_enPassent = _pieces[vals[0]][vals[1]];
+
+
+
+		this->swapPiece(vals[0],vals[1],  vals[2], vals[3]);
+		Piece* rem = removePiece(vals[0], vals[1]);//i switched between them so now the unwanted one is the frst
+
 		if (_turn ? checkOnTheKing(_blackPlayer) : checkOnTheKing(_whitePlayer))//Checking if you checked the other king
 		{
-			result = 1;
+			result = 1;//Check
 			if (StaleMate(_turn ? _blackPlayer : _whitePlayer))//Both check and stalemate = checkmate
-				result = 8;
+				result = 8;//Chess
+			Transformation(vals[2], vals[3]);
 		}
 		else if (!_turn ? checkOnTheKing(_blackPlayer) : checkOnTheKing(_whitePlayer))//Checking if you checked the other king
 		{
-			//Transformation(values[0],values[1]);
+			
 			result = 4;	
-			_pieces[values[0]][values[1]] = rem;
-			this->movePiece(values[0], values[1], values[2], values[3]);
+			_pieces[vals[0]][vals[1]] = rem;
+			this->swapPiece(vals[0], vals[1], vals[2], vals[3]);
 
 		}
+		else
+		{
+			Transformation(vals[2], vals[3]);//it will check transformation both if you checked or not, just not when you are threathend a check
+		}
+		//if (emptyBoard() && StaleMate(_turn ? _blackPlayer : _whitePlayer))//Both check and stalemate = checkmate
+		//	result = 8;
 
-		if(result == 0 || result == 1 || result == 8)
+		if(result == 0 || result == 1 || result == 8)//only moves to make move work
 			this->_turn = !_turn;
 	}
 	return result;
 }
-void Board::movePiece(int nowX, int nowY, int toX, int toY)
+void Board::swapPiece(int nowX, int nowY, int toX, int toY)
 {
-	//if (_pieces[nowX][nowY]->getType() == 'k' || _pieces[nowX][nowY]->getType() == 'p')
-	//	std::cout << "how";
+
 	Piece* pointerNow = _pieces[nowX][nowY];
 	Piece* pointerTo = _pieces[toX][toY];
 	if(this->_pieces[nowX][nowY] != nullptr)this->_pieces[nowX][nowY]->changeCoords(toX,toY);
 	if(this->_pieces[toX][toY] != nullptr)this->_pieces[toX][toY]->changeCoords(nowX,nowY);
 	this->_pieces[toX][toY] = pointerNow;
 	this->_pieces[nowX][nowY] = pointerTo;
-	//std::cout << _pieces[toX][toY]->getX() << _pieces[toX][toY]->getY();
-	//if(_pieces[nowX][nowY] != nullptr) this->_pieces[nowX][nowY]->changeCoords(toX,toY);
 }
 bool Board::checkOnTheKing(Player* player)
 {
-	Piece* thisKing = player->getKing();
-	
+	Piece* king = player->getKing();
+	int kingY = king->getY();
+	int kingX = king->getX();
+	int dir = player->getDirection();
+	Piece* pawn;
 	for (int i = 0;i < BOARD_SIZE;i++)
 	{
 		for (int j = 0;j < BOARD_SIZE;j++)
 		{
-			if (_pieces[i][j] != nullptr && _pieces[i][j]->getType() != 'p' && _pieces[i][j]->whiteOrNot() != thisKing->whiteOrNot() && _pieces[i][j]->moveValid(thisKing->getX(), thisKing->getY()) && pathIsClear(i, j,thisKing->getX(), thisKing->getY()))
+			if (_pieces[i][j] != nullptr && _pieces[i][j]->getType() != 'p' && !sameColor(_pieces[i][j],king) && _pieces[i][j]->moveValid(king->getX(), king->getY()) && pathIsClear(i, j,king->getX(), king->getY()))
 			{
 				std::cout << _pieces[i][j]->getType();
 				return true;
 			}
 		}
 	}
-	if ((inBounds(thisKing->getX() + player->getDirection(), thisKing->getY() - 1) && _pieces[thisKing->getX() + player->getDirection()][thisKing->getY() - 1] != nullptr && _pieces[thisKing->getX() + player->getDirection()][thisKing->getY() - 1]->getType() == 'p' && _pieces[thisKing->getX() + player->getDirection()][thisKing->getY() - 1]->whiteOrNot() != thisKing->whiteOrNot()) || (inBounds(thisKing->getX() + player->getDirection(), thisKing->getY() + 1) && _pieces[thisKing->getX() + player->getDirection()][thisKing->getY() + 1] != nullptr && _pieces[thisKing->getX() + player->getDirection()][thisKing->getY() + 1]->getType() == 'p' && _pieces[thisKing->getX() + player->getDirection()][thisKing->getY() + 1]->whiteOrNot() != thisKing->whiteOrNot()))
-		return true;
-		/*for (int i = thisKing->getX() + 1;i < BOARD_SIZE;i++)
+	if (inBounds(kingX + dir, kingY - 1))
 	{
-		if (_pieces[i][thisKing->getY()] == nullptr) continue;
-		if (pathIsClear(thisKing->getX(), thisKing->getY(), i, thisKing->getY()) && _pieces[i][thisKing->getY()]->moveValid(thisKing->getX(), thisKing->getY()))
+		pawn = _pieces[kingX + dir][kingY - 1];//left upper pawn(theortically)
+		if (pawn != nullptr && pawn->getType() == 'p' && !sameColor(pawn, king))
 			return true;
 	}
-	for (int i = thisKing->getX() - 1;i > 0;i--)
+	if (inBounds(kingX + dir, kingY + 1))
 	{
-		if (_pieces[i][thisKing->getY()] == nullptr) continue;
-		if (pathIsClear(thisKing->getX(), thisKing->getY(), i, thisKing->getY()) && _pieces[i][thisKing->getY()]->moveValid(thisKing->getX(), thisKing->getY()))
+		pawn = _pieces[kingX + dir][kingY + 1];//right upper pawn(theortically)
+		if (pawn != nullptr && pawn->getType() == 'p' && !sameColor(pawn, king))
+			return true;
+	}
+	/*for (int i = king->getX() + 1;i < BOARD_SIZE;i++)
+	{
+		if (_pieces[i][king->getY()] == nullptr) continue;
+		if (pathIsClear(king->getX(), king->getY(), i, king->getY()) && _pieces[i][king->getY()]->moveValid(king->getX(), king->getY()))
+			return true;
+	}
+	for (int i = king->getX() - 1;i > 0;i--)
+	{
+		if (_pieces[i][king->getY()] == nullptr) continue;
+		if (pathIsClear(king->getX(), king->getY(), i, king->getY()) && _pieces[i][king->getY()]->moveValid(king->getX(), king->getY()))
 			return true;
 	}*/
 	return false;
@@ -169,7 +186,7 @@ std::string Board::craftBoard()
 		{
 			char key = '#';
 			if(this->_pieces[i][j] != nullptr)
-				key = _pieces[i][j]->whiteOrNot() == true ? static_cast<char>(static_cast<int>(_pieces[i][j]->getType()) - 32): _pieces[i][j]->getType();
+				key = _pieces[i][j]->whiteOrNot() ? static_cast<char>(static_cast<int>(_pieces[i][j]->getType()) - 32): _pieces[i][j]->getType();
 			output += key;
 
 		}
@@ -187,6 +204,7 @@ Piece* Board::removePiece(int x, int y)
 	_pieces[x][y] = nullptr;
 	return rtnPiece;
 }
+//In this function Im checking if the pawn can eat smth,if yes i will trick the pawn class to think that the move is possible
 bool Board::trickPawn(int nowX, int nowY, int toX, int toY)
 {
 	if (_pieces[nowX][nowY]->getType() != 'p') return false;
@@ -218,13 +236,13 @@ bool Board::StaleMate(Player* player)//if its false so stalemate
 		{
 			if (j == i) continue;
 			if (!inBounds(x + i, y + j)) continue;
-			if (_pieces[x + i][y + j] != nullptr && player->getKing() != nullptr && _pieces[x + i][y + j]->whiteOrNot() == player->getKing()->whiteOrNot()) continue;
-			this->movePiece(x, y, x+i, y+j);
+			if (_pieces[x + i][y + j] != nullptr && player->getKing() != nullptr && sameColor(player->getKing(),_pieces[x+i][y+j])) continue;
+			this->swapPiece(x, y, x+i, y+j);
 			Piece* rem = removePiece(x, y);
 			bool result = checkOnTheKing(player);
 
 			_pieces[x][y] = rem;
-			this->movePiece(x, y, x + i, y + j);
+			this->swapPiece(x, y, x + i, y + j);
 			if (!result) return false;
 
 		}
@@ -233,5 +251,32 @@ bool Board::StaleMate(Player* player)//if its false so stalemate
 }
 void Board::Transformation(int x,int y)
 {
-
+	//theres a piece there 100%
+	bool isWhite = _pieces[x][y]->whiteOrNot();
+	int dir = isWhite ? _whitePlayer->getDirection() : _blackPlayer->getDirection();
+	std::cout << "Im still standing";
+	if (!inBounds(x + dir, y))
+	{
+		std::cout << "Im still standing";
+		//MAKE OVER TIME
+		removePiece(x + dir, y);
+		_pieces[x + dir][y] = new Queen(x,y,isWhite);
+	}
+}
+bool Board::emptyBoard()
+{
+	//if the board is empty from pieces and theres only the king
+	for (int i = 0;i < BOARD_SIZE;i++)
+	{
+		for (int j = 0;j < BOARD_SIZE;j++)
+		{
+			if (_pieces[i][j]->getType() != 'p') return false;
+		}
+	}
+	return true;
+}
+bool Board::sameColor(Piece* one, Piece* two)
+{
+	//If theres no color then it cant be equal to smth
+	return one != nullptr && two != nullptr && one->whiteOrNot() == two->whiteOrNot();
 }

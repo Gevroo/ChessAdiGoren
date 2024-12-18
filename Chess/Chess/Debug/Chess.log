@@ -1,3 +1,2 @@
-﻿  Source.cpp
-C:\Users\Cyber_User\Desktop\Adi's programming\Second Year\CPP\ChessAdiGoren\Chess\Chess\Source.cpp(17,1): warning C4326: return type of 'main' should be 'int' instead of 'void'
+﻿  Board.cpp
   Chess.vcxproj -> C:\Users\Cyber_User\Desktop\Adi's programming\Second Year\CPP\ChessAdiGoren\Chess\Debug\Chess.exe
