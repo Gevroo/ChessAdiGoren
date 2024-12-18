@@ -47,7 +47,7 @@ void main()
 	// YOUR CODE
 	
 
-	strcpy_s(msgToGraphics, "rnbkqbnrpppppppp################################PPPPPPPPRNBKQBNR1"); // just example...
+	strcpy_s(msgToGraphics, "rnbkqbnrpppppppp################################PPPPPPPPRNBKQBNR0"); // just example...
 	Board* chessBoard = new Board(msgToGraphics);
 	p.sendMessageToGraphics(msgToGraphics);   // send the board string
 

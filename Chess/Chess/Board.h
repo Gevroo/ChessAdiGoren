@@ -14,15 +14,16 @@ public:
 	Board(std::string buildBoardCommand);
 	int moveValid(std::string command);
 	void movePiece(int nowX, int nowY, int toX, int toY);
-	bool checkOnTheKing(bool whiteOrBlack);
+	bool checkOnTheKing(Player* player);
 	std::string craftBoard();
 	bool inBounds(int x,int y);
-	void removePiece(int x,int y);
+	Piece* removePiece(int x,int y);
 	bool pieceExist(int x, int y, bool expectedColor, bool exist)const;
-
+	bool trickPawn(int nowX, int nowY, int toX, int toY);
 private:
 	Piece* _pieces[BOARD_SIZE][BOARD_SIZE];
 	Player* _whitePlayer;
 	Player* _blackPlayer;
+	Piece* _enPassent;
 	bool _turn;//white = true
 };

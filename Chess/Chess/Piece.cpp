@@ -29,3 +29,7 @@ Piece::Piece(int x, int y, char type, bool isWhite)
 	this->_type = type;
 	this->_isWhite = isWhite;
 }
+Piece::Piece()
+{
+
+}

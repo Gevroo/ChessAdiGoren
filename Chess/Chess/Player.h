@@ -4,8 +4,10 @@
 class Player
 {
 public:
-	Player(int x, int y, bool isWhite, int direction);
+	Player(bool isWhite, int direction);
 	int getDirection() const;
+	Piece* getKing() const;
+	void setKing(Piece* all_hail_the_king);
 private:
 	Piece* _king;
 	bool _white;

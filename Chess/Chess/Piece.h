@@ -5,6 +5,7 @@ class Piece
 {
 public:
 	Piece(int x, int y, char type, bool isWhite);
+	Piece();
 	int getX()const;
 	int getY() const;
 	char getType() const;
