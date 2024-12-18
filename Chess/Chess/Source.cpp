@@ -68,6 +68,7 @@ void main()
 		int r = chessBoard->moveValid(msgFromGraphics); // just for debugging......
 		msgToGraphics[0] = (char)(r + '0');
 		msgToGraphics[1] = 0;
+		
 		/******* JUST FOR EREZ DEBUGGING ******/
 
 
@@ -76,6 +77,8 @@ void main()
 
 		// get message from graphics
 		msgFromGraphics = p.getMessageFromGraphics();
+		//if (r == 8) break;
+
 	}
 
 	p.close();

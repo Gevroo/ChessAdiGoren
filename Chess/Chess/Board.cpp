@@ -97,15 +97,21 @@ int Board::moveValid(std::string command)
 		this->movePiece(values[0],values[1],  values[2], values[3]);
 		Piece* rem = removePiece(values[0], values[1]);//i switched between them so now the unwanted one is the frst
 		if (_turn ? checkOnTheKing(_blackPlayer) : checkOnTheKing(_whitePlayer))//Checking if you checked the other king
-			result = 1;
-		if (!_turn ? checkOnTheKing(_blackPlayer) : checkOnTheKing(_whitePlayer))//Checking if you checked the other king
 		{
+			result = 1;
+			if (StaleMate(_turn ? _blackPlayer : _whitePlayer))//Both check and stalemate = checkmate
+				result = 8;
+		}
+		else if (!_turn ? checkOnTheKing(_blackPlayer) : checkOnTheKing(_whitePlayer))//Checking if you checked the other king
+		{
+			//Transformation(values[0],values[1]);
 			result = 4;	
 			_pieces[values[0]][values[1]] = rem;
 			this->movePiece(values[0], values[1], values[2], values[3]);
 
 		}
-		if(result == 0 || result == 1)
+
+		if(result == 0 || result == 1 || result == 8)
 			this->_turn = !_turn;
 	}
 	return result;
@@ -201,4 +207,31 @@ bool Board::trickPawn(int nowX, int nowY, int toX, int toY)
 	}
 	
 	return false;
+}
+bool Board::StaleMate(Player* player)//if its false so stalemate
+{
+	int x = player->getKing()->getX();
+	int y = player->getKing()->getY();
+	for (int i = -1;i <= 1;i++)
+	{
+		for (int j = -1;j <= 1;j++)
+		{
+			if (j == i) continue;
+			if (!inBounds(x + i, y + j)) continue;
+			if (_pieces[x + i][y + j] != nullptr && player->getKing() != nullptr && _pieces[x + i][y + j]->whiteOrNot() == player->getKing()->whiteOrNot()) continue;
+			this->movePiece(x, y, x+i, y+j);
+			Piece* rem = removePiece(x, y);
+			bool result = checkOnTheKing(player);
+
+			_pieces[x][y] = rem;
+			this->movePiece(x, y, x + i, y + j);
+			if (!result) return false;
+
+		}
+	}
+	return true;
+}
+void Board::Transformation(int x,int y)
+{
+
 }

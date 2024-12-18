@@ -20,6 +20,8 @@ public:
 	Piece* removePiece(int x,int y);
 	bool pieceExist(int x, int y, bool expectedColor, bool exist)const;
 	bool trickPawn(int nowX, int nowY, int toX, int toY);
+	bool StaleMate(Player* player);
+	void Transformation(int x,int y);
 private:
 	Piece* _pieces[BOARD_SIZE][BOARD_SIZE];
 	Player* _whitePlayer;
