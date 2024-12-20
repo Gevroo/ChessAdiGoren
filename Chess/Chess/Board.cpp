@@ -103,7 +103,7 @@ int Board::moveValid(std::string command)
 				result = 8;//Chess
 			Transformation(vals[2], vals[3]);
 		}
-		else if (!_turn ? checkOnTheKing(_blackPlayer) : checkOnTheKing(_whitePlayer))//Checking if you checked the other king
+		if (!_turn ? checkOnTheKing(_blackPlayer) : checkOnTheKing(_whitePlayer))//Checking if you checked the other king
 		{
 			
 			result = 4;	
