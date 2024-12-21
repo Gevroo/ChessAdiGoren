@@ -10,7 +10,7 @@ bool Board::pathIsClear(int nowX,int nowY,int toX,int toY)
 	int stepX = !slopeX ? 0 : slopeX > 0 ? 1 : -1;
 	int stepY = !slopeY ? 0 : slopeY > 0 ? 1 : -1;
 
-	int currentX = stepX + nowX;
+	int currentX = stepX + nowX;	
 	int currentY = stepY + nowY;//Doing first time
 	while (currentX != toX || currentY != toY)
 	{
@@ -83,6 +83,8 @@ int Board::moveValid(std::string command)
 		return 3;
 	else if ((_pieces[vals[2]][vals[3]] != nullptr && vals[1] == vals[3] && _pieces[vals[0]][vals[1]]->getType() == 'p') || (!trickPawn(vals[0], vals[1], vals[2], vals[3]) && (!_pieces[vals[0]][vals[1]]->moveValid(vals[2], vals[3]) || !pathIsClear(vals[0], vals[1], vals[2], vals[3]))))
 		return 6;
+	if (vals[1] != vals[3] && _pieces[vals[0]][vals[1]]->getType() == 'p' && _pieces[vals[2]][vals[3]] == nullptr)//meant that the moves worked
+		result = 9;//en passent
 	//this if is making my code feel stupid
 	//Explanation: it will check if theres a piece infront of the pawn and if yes it will give an error, it will check if a pawn can eat,and lastly it will check manualy for all of the other pieces
 	_enPassent = nullptr;
@@ -101,7 +103,8 @@ int Board::moveValid(std::string command)
 			result = 1;//Check
 			if (StaleMate(_turn ? _blackPlayer : _whitePlayer))//Both check and stalemate = checkmate
 				result = 8;//Chess
-			Transformation(vals[2], vals[3]);
+			if (Transformation(vals[2], vals[3]))
+				result = 10;
 		}
 		if (!_turn ? checkOnTheKing(_blackPlayer) : checkOnTheKing(_whitePlayer))//Checking if you checked the other king
 		{
@@ -113,12 +116,13 @@ int Board::moveValid(std::string command)
 		}
 		else
 		{
-			Transformation(vals[2], vals[3]);//it will check transformation both if you checked or not, just not when you are threathend a check
+			if (Transformation(vals[2], vals[3]))
+				result = 9;
 		}
-		//if (emptyBoard() && StaleMate(_turn ? _blackPlayer : _whitePlayer))//Both check and stalemate = checkmate
-		//	result = 8;
+		//if (emptyBoard(_turn) && StaleMate(_turn ? _blackPlayer : _whitePlayer))//Both check and stalemate = checkmate
+		//	result = 9;
 
-		if(result == 0 || result == 1 || result == 8)//only moves to make move work
+		if(result == 0 || result == 1 || result == 8 || result == 9)//only moves to make move work
 			this->_turn = !_turn;
 	}
 	return result;
@@ -249,7 +253,7 @@ bool Board::StaleMate(Player* player)//if its false so stalemate
 	}
 	return true;
 }
-void Board::Transformation(int x,int y)
+bool Board::Transformation(int x,int y)
 {
 	//theres a piece there 100%
 	bool isWhite = _pieces[x][y]->whiteOrNot();
@@ -257,20 +261,23 @@ void Board::Transformation(int x,int y)
 	std::cout << "Im still standing";
 	if (!inBounds(x + dir, y))
 	{
-		std::cout << "Im still standing";
+		std::cout << _pieces[x][y]->getType();
 		//MAKE OVER TIME
 		removePiece(x + dir, y);
-		_pieces[x + dir][y] = new Queen(x,y,isWhite);
+		//_pieces[x][y] = nullptr;
+		_pieces[x][y] = new Queen(x,y,isWhite);
+		return true;
 	}
+	return false;
 }
-bool Board::emptyBoard()
+bool Board::emptyBoard(bool white)
 {
 	//if the board is empty from pieces and theres only the king
 	for (int i = 0;i < BOARD_SIZE;i++)
 	{
 		for (int j = 0;j < BOARD_SIZE;j++)
 		{
-			if (_pieces[i][j]->getType() != 'p') return false;
+			if (_pieces[i][j]->getType() != 'k' && _pieces[i][j]->whiteOrNot() != white) return false;
 		}
 	}
 	return true;

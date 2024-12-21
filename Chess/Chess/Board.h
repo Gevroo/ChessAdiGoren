@@ -21,8 +21,8 @@ public:
 	//bool pieceExist(int x, int y, bool expectedColor, bool exist)const;
 	bool trickPawn(int nowX, int nowY, int toX, int toY);
 	bool StaleMate(Player* player);
-	void Transformation(int x,int y);
-	bool emptyBoard();
+	bool Transformation(int x,int y);
+	bool emptyBoard(bool white);
 	bool sameColor(Piece* one, Piece* two);
 private:
 	Piece* _pieces[BOARD_SIZE][BOARD_SIZE];

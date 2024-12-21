@@ -1,0 +1,10 @@
+C:\Users\Cyber_User\Desktop\Adi's programming\Second Year\CPP\ChessAdiGoren\Chess\chessGraphics.exe\chessGraphics\bin\Release\chessGraphics.exe.config
+C:\Users\Cyber_User\Desktop\Adi's programming\Second Year\CPP\ChessAdiGoren\Chess\chessGraphics.exe\chessGraphics\bin\Release\chessGraphics.exe
+C:\Users\Cyber_User\Desktop\Adi's programming\Second Year\CPP\ChessAdiGoren\Chess\chessGraphics.exe\chessGraphics\bin\Release\chessGraphics.pdb
+C:\Users\Cyber_User\Desktop\Adi's programming\Second Year\CPP\ChessAdiGoren\Chess\chessGraphics.exe\chessGraphics\obj\Release\chessGraphics.csproj.AssemblyReference.cache
+C:\Users\Cyber_User\Desktop\Adi's programming\Second Year\CPP\ChessAdiGoren\Chess\chessGraphics.exe\chessGraphics\obj\Release\chessGraphics.Form1.resources
+C:\Users\Cyber_User\Desktop\Adi's programming\Second Year\CPP\ChessAdiGoren\Chess\chessGraphics.exe\chessGraphics\obj\Release\chessGraphics.Properties.Resources.resources
+C:\Users\Cyber_User\Desktop\Adi's programming\Second Year\CPP\ChessAdiGoren\Chess\chessGraphics.exe\chessGraphics\obj\Release\chessGraphics.csproj.GenerateResource.cache
+C:\Users\Cyber_User\Desktop\Adi's programming\Second Year\CPP\ChessAdiGoren\Chess\chessGraphics.exe\chessGraphics\obj\Release\chessGraphics.csproj.CoreCompileInputs.cache
+C:\Users\Cyber_User\Desktop\Adi's programming\Second Year\CPP\ChessAdiGoren\Chess\chessGraphics.exe\chessGraphics\obj\Release\chessGraphics.exe
+C:\Users\Cyber_User\Desktop\Adi's programming\Second Year\CPP\ChessAdiGoren\Chess\chessGraphics.exe\chessGraphics\obj\Release\chessGraphics.pdb
