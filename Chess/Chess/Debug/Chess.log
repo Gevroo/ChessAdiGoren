@@ -1,2 +1,13 @@
-﻿  Board.cpp
+﻿  Bishop.cpp
+  Board.cpp
+  King.cpp
+  Knight.cpp
+  Pawn.cpp
+  Piece.cpp
+  Player.cpp
+  Queen.cpp
+  Rook.cpp
+  Source.cpp
+C:\Users\Cyber_User\Desktop\Adi's programming\Second Year\CPP\ChessAdiGoren\Chess\Chess\Source.cpp(17,1): warning C4326: return type of 'main' should be 'int' instead of 'void'
+  Generating Code...
   Chess.vcxproj -> C:\Users\Cyber_User\Desktop\Adi's programming\Second Year\CPP\ChessAdiGoren\Chess\Debug\Chess.exe

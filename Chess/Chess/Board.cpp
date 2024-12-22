@@ -1,6 +1,16 @@
 #include "Board.h"
 #include <iostream>
 
+#define VALID_MOVE 0
+#define CHECK 1
+#define NO_PIECE 2
+#define PIECE_EXIST 3
+#define SELF_CHECK 4
+#define OUT_OF_BOUNDS 5
+#define MOVE_CANT_MOVE_LIKE_THAT 6
+#define SAME_THING 7
+#define CHECKMATE 8
+#define PROMOTION 9
 bool Board::pathIsClear(int nowX,int nowY,int toX,int toY)
 {
 	if (_pieces[nowX][nowY]->getType() == 'n') return true;//Because knight can jump high
@@ -72,23 +82,23 @@ int Board::moveValid(std::string command)
 
 
 	if (!inBounds(vals[0], vals[1]) || !inBounds(vals[2], vals[3]))
-		return 5;
+		return OUT_OF_BOUNDS;
 	else if (_pieces[vals[0]][vals[1]] == nullptr || _pieces[vals[0]][vals[1]]->whiteOrNot() != _turn)
-		return 2;
+		return NO_PIECE;
 	else if (vals[0] == vals[2] && vals[1] == vals[3])
-		return 7;
+		return SAME_THING;
 	//else if (pieceExist(vals[0], vals[1], _turn, false))
 	//		result = 2;
 	else if(_pieces[vals[2]][vals[3]] != nullptr && _pieces[vals[2]][vals[3]]->whiteOrNot() == _turn)
-		return 3;
+		return PIECE_EXIST;
 	else if ((_pieces[vals[2]][vals[3]] != nullptr && vals[1] == vals[3] && _pieces[vals[0]][vals[1]]->getType() == 'p') || (!trickPawn(vals[0], vals[1], vals[2], vals[3]) && (!_pieces[vals[0]][vals[1]]->moveValid(vals[2], vals[3]) || !pathIsClear(vals[0], vals[1], vals[2], vals[3]))))
-		return 6;
-	if (vals[1] != vals[3] && _pieces[vals[0]][vals[1]]->getType() == 'p' && _pieces[vals[2]][vals[3]] == nullptr)//meant that the moves worked
-		result = 9;//en passent
+		return MOVE_CANT_MOVE_LIKE_THAT;
+	//if (vals[1] != vals[3] && _pieces[vals[0]][vals[1]]->getType() == 'p' && _pieces[vals[2]][vals[3]] == nullptr)//meant that the moves worked
+	//	result = 9;//en passent
 	//this if is making my code feel stupid
 	//Explanation: it will check if theres a piece infront of the pawn and if yes it will give an error, it will check if a pawn can eat,and lastly it will check manualy for all of the other pieces
 	_enPassent = nullptr;
-	if (result == 0)
+	if (result == VALID_MOVE)
 	{
 		if (_pieces[vals[0]][vals[1]]->getType() == 'p' && abs(vals[0] - vals[2]) == 2)
 			_enPassent = _pieces[vals[0]][vals[1]];
@@ -100,16 +110,16 @@ int Board::moveValid(std::string command)
 
 		if (_turn ? checkOnTheKing(_blackPlayer) : checkOnTheKing(_whitePlayer))//Checking if you checked the other king
 		{
-			result = 1;//Check
+			result = CHECK;//Check
 			if (StaleMate(_turn ? _blackPlayer : _whitePlayer))//Both check and stalemate = checkmate
-				result = 8;//Chess
+				result = CHECKMATE;//Chess
 			if (Transformation(vals[2], vals[3]))
-				result = 10;
+				result = PROMOTION;
 		}
 		if (!_turn ? checkOnTheKing(_blackPlayer) : checkOnTheKing(_whitePlayer))//Checking if you checked the other king
 		{
 			
-			result = 4;	
+			result = SELF_CHECK;	
 			_pieces[vals[0]][vals[1]] = rem;
 			this->swapPiece(vals[0], vals[1], vals[2], vals[3]);
 
@@ -117,12 +127,12 @@ int Board::moveValid(std::string command)
 		else
 		{
 			if (Transformation(vals[2], vals[3]))
-				result = 9;
+				result = PROMOTION;
 		}
 		//if (emptyBoard(_turn) && StaleMate(_turn ? _blackPlayer : _whitePlayer))//Both check and stalemate = checkmate
 		//	result = 9;
 
-		if(result == 0 || result == 1 || result == 8 || result == 9)//only moves to make move work
+		if(result == VALID_MOVE || result == CHECK || result == CHECKMATE || result == PROMOTION)//only moves to make move work
 			this->_turn = !_turn;
 	}
 	return result;
@@ -181,7 +191,7 @@ bool Board::checkOnTheKing(Player* player)
 	}*/
 	return false;
 }
-std::string Board::craftBoard()
+std::string Board::craftBoard() const
 {
 	std::string output = "";
 	for (int i = 0;i < BOARD_SIZE;i++)
@@ -240,8 +250,8 @@ bool Board::StaleMate(Player* player)//if its false so stalemate
 		{
 			if (j == i) continue;
 			if (!inBounds(x + i, y + j)) continue;
-			if (_pieces[x + i][y + j] != nullptr && player->getKing() != nullptr && sameColor(player->getKing(),_pieces[x+i][y+j])) continue;
-			this->swapPiece(x, y, x+i, y+j);
+			if (_pieces[x + i][y + j] != nullptr && player->getKing() != nullptr && sameColor(player->getKing(), _pieces[x + i][y + j])) continue;
+			this->swapPiece(x, y, x + i, y + j);
 			Piece* rem = removePiece(x, y);
 			bool result = checkOnTheKing(player);
 
@@ -251,7 +261,39 @@ bool Board::StaleMate(Player* player)//if its false so stalemate
 
 		}
 	}
+
+	for (int i = 0;i < BOARD_SIZE;i++)
+	{
+		for (int j = 0;j < BOARD_SIZE;j++)
+		{
+			if (_pieces[i][j] != nullptr && sameColor(player->getKing(), _pieces[i][j]))
+			{
+				if (pieceCanPreventMate(player, i, j))
+					return false;
+			}
+		}
+	}
 	return true;
+}
+bool Board::pieceCanPreventMate(Player* player,int x,int y)
+{
+	for (int i = 0;i < BOARD_SIZE;i++)
+	{
+		for (int j = 0;j < BOARD_SIZE;j++)
+		{
+			if (!inBounds( i, j)) continue;
+			if (!(_pieces[x][y]->moveValid( i,j) && pathIsClear(x, y,  i,  j)))continue;
+			if (_pieces[i][j] != nullptr && sameColor(_pieces[x][y], _pieces[i][j])) continue;
+			this->swapPiece(x, y,i,j);
+			Piece* rem = removePiece(x, y);
+			bool result = checkOnTheKing(player);
+
+			_pieces[x][y] = rem;
+			this->swapPiece(x, y, i,j);
+			if (!result) return true;
+		}
+	}
+	return false;
 }
 bool Board::Transformation(int x,int y)
 {
@@ -270,7 +312,7 @@ bool Board::Transformation(int x,int y)
 	}
 	return false;
 }
-bool Board::emptyBoard(bool white)
+bool Board::emptyBoard(bool white) const
 {
 	//if the board is empty from pieces and theres only the king
 	for (int i = 0;i < BOARD_SIZE;i++)
@@ -282,7 +324,9 @@ bool Board::emptyBoard(bool white)
 	}
 	return true;
 }
-bool Board::sameColor(Piece* one, Piece* two)
+
+
+bool Board::sameColor(Piece* one, Piece* two) const
 {
 	//If theres no color then it cant be equal to smth
 	return one != nullptr && two != nullptr && one->whiteOrNot() == two->whiteOrNot();

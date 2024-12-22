@@ -15,15 +15,16 @@ public:
 	int moveValid(std::string command);
 	void swapPiece(int nowX, int nowY, int toX, int toY);
 	bool checkOnTheKing(Player* player);
-	std::string craftBoard();
+	std::string craftBoard() const;
 	bool inBounds(int x,int y);
 	Piece* removePiece(int x,int y);
 	//bool pieceExist(int x, int y, bool expectedColor, bool exist)const;
 	bool trickPawn(int nowX, int nowY, int toX, int toY);
 	bool StaleMate(Player* player);
 	bool Transformation(int x,int y);
-	bool emptyBoard(bool white);
-	bool sameColor(Piece* one, Piece* two);
+	bool emptyBoard(bool white) const;
+	bool sameColor(Piece* one, Piece* two) const;
+	bool pieceCanPreventMate(Player* player, int x, int y);
 private:
 	Piece* _pieces[BOARD_SIZE][BOARD_SIZE];
 	Player* _whitePlayer;
