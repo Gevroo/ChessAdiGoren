@@ -12,17 +12,17 @@ class Board
 public:
 	bool pathIsClear(int nowX, int nowY, int toX, int toY);
 	Board(std::string buildBoardCommand);
+	~Board();
 	int moveValid(std::string command);
 	void swapPiece(int nowX, int nowY, int toX, int toY);
 	bool checkOnTheKing(Player* player);
 	std::string craftBoard() const;
 	bool inBounds(int x,int y);
 	Piece* removePiece(int x,int y);
-	//bool pieceExist(int x, int y, bool expectedColor, bool exist)const;
 	bool trickPawn(int nowX, int nowY, int toX, int toY);
 	bool StaleMate(Player* player);
 	bool Transformation(int x,int y);
-	bool emptyBoard(bool white) const;
+	bool emptyBoard(const bool whiteOrNot) const;
 	bool sameColor(Piece* one, Piece* two) const;
 	bool pieceCanPreventMate(Player* player, int x, int y);
 private:

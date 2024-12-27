@@ -214,13 +214,13 @@ namespace chessGraphics
             "Invalid move - not your player",
             "Invalid move - destination is not free",
             "Invalid move - chess wil occure",
-            "Invalid move - out of bounds",
+            //"Invalid move - out of bounds",
+            "Game over - Stalemate",
             "Invalid move - illegeal movement with piece",
-            "Invalid move - source and dest are equal",
-            "Game over - check mate",
-            //"Game over - Stalemate",
             "Valid move - en passent",
-            //"Valid move - ~Make Over~",
+            //"Invalid move - source and dest are equal",
+            "Game over - check mate",
+            "Valid move - ~Make Over~",
             "Unknown message"
             };
 
@@ -295,7 +295,7 @@ namespace chessGraphics
                              string queen = isCurPlWhite ? "q_black.png" : "q_white.png";
                              matBoard[dstSquare.Row, dstSquare.Col].BackgroundImage = Image.FromFile("C:\\Users\\Cyber_User\\Desktop\\Adi's programming\\Second Year\\CPP\\ChessAdiGoren\\Chess\\chessGraphics.exe\\chessGraphics\\Resources\\" + queen);
                          }
-                        else if(res.EndsWith("en passent"))
+                        if(res.EndsWith("en passent"))
                          {
                              matBoard[srcSquare.Row,dstSquare.Col].BackgroundImage = null;
                          }
